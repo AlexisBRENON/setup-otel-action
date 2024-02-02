@@ -9,13 +9,13 @@ See [action.yml](action.yml)
 ### Validate your collector configuration
 
 ```yaml
-steps:
-- uses: actions/checkout@v4
-- uses: actions/setup-otel@v1
-  with:
-    otel-version: '0.93.0'
-    otel-distribution: 'otelcol-contrib'
-- run: otelcol-contrib validate --config ./otel-config.yaml
+    steps:
+    - uses: actions/checkout@v4
+    - uses: AlexisBRENON/setup-otel-action@v1.0.0
+      with:
+        otel-version: '0.93.0'
+        otel-distribution: 'otelcol-contrib'
+    - run: otelcol-contrib validate --config ./otel-config.yaml
 ```
 
 The `otel-distribution` input is optional and will fallback on `otelcol-contrib`.
