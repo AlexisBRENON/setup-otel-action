@@ -28600,9 +28600,10 @@ async function run() {
     try {
         const version = core.getInput('otel-version');
         const distribution = core.getInput('otel-distribution');
-        const architecture = core.getInput('architecture');
-        if (version && distribution && architecture) {
-            const toolPath = await getOtel(version, distribution, architecture);
+        const os = process.env.RUNNER_OS;
+        const architecture = process.env.RUNNER_ARCH;
+        if (version && distribution && os && architecture) {
+            const toolPath = await getOtel(version, distribution, os, architecture);
             core.setOutput('otel-version', version);
             core.setOutput('otel-path', path.join(toolPath, distribution));
         }
@@ -28612,19 +28613,32 @@ async function run() {
             core.setFailed(error.message);
     }
 }
-async function getOtel(version, distribution, architecture) {
-    let toolPath = tc.find('otel', `${distribution}-${version}`, architecture);
+async function getOtel(version, distribution, os, architecture) {
+    let toolPath = tc.find('otel', `${distribution}-${version}-${os}`, architecture);
     core.setOutput('cache-hit', true);
     if (!toolPath) {
         core.setOutput('cache-hit', false);
-        toolPath = await downloadOtel(version, distribution, architecture);
-        await tc.cacheDir(toolPath, 'otel', `${distribution}-${version}`, architecture);
+        toolPath = await downloadOtel(version, distribution, os, architecture);
+        await tc.cacheDir(toolPath, 'otel', `${distribution}-${version}-${os}`, architecture);
     }
     core.addPath(toolPath);
     return toolPath;
 }
-async function downloadOtel(version, distribution, architecture) {
-    const downloadUrl = `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${version}/${distribution}_${version}_linux_${architecture}.tar.gz`;
+const os_mapping = new Map([
+    ['Linux', 'linux'],
+    ['macOS', 'darwin'],
+    ['Windows', 'windows']
+]);
+const arch_mapping = new Map([
+    ['X86', '386'],
+    ['X64', 'amd64'],
+    ['ARM', 'armv7'],
+    ['ARM64', 'arm64']
+]);
+async function downloadOtel(version, distribution, os, architecture) {
+    const release_os = os_mapping.get(os) || 'linux';
+    const release_arch = arch_mapping.get(architecture) || 'amd64';
+    const downloadUrl = `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${version}/${distribution}_${version}_${release_os}_${release_arch}.tar.gz`;
     console.log(`Downloading ${downloadUrl}`);
     const downloadPath = await tc.downloadTool(downloadUrl);
     return await tc.extractTar(downloadPath);
