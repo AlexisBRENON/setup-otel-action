@@ -20,9 +20,6 @@ See [action.yml](action.yml)
 
 The `otel-distribution` input is optional and will fallback on `otelcol-contrib`.
 
-Using `architecture` input it is possible to specify the required architecture: `amd64`, `arm64`, etc.
-If the input is not specified the architecture defaults to `amd64`.
-
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE).
