@@ -55,7 +55,7 @@ jobs:
         id: test-action
         uses: ./
         with:
-          otel-version: "0.93.0"
+          otel-version: '0.93.0'
 
       - name: Print Output
         id: output

@@ -1,5 +1,6 @@
 name: 'setup-otel'
-description: 'Set up your GitHub Actions workflow with a specific version of OpenTelemetry'
+description:
+  'Set up your GitHub Actions workflow with a specific version of OpenTelemetry'
 inputs:
   otel-version:
     description: 'Version to download'
@@ -9,16 +10,16 @@ inputs:
     required: false
     default: 'otelcol-contrib'
   architecture:
-    description: "The target architecture (amd64, arm64) of the binary."
+    description: 'The target architecture (amd64, arm64) of the binary.'
     required: false
     default: 'amd64'
 outputs:
   otel-version:
-    description: "The installed version."
+    description: 'The installed version.'
   cache-hit:
-    description: "A boolean value to indicate a cache entry was found"
+    description: 'A boolean value to indicate a cache entry was found'
   otel-path:
-    description: "The absolute path to the otel executable."
+    description: 'The absolute path to the otel executable.'
 runs:
   using: 'node20'
   main: 'dist/index.js'
